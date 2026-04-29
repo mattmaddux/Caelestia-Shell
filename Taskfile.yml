@@ -1,0 +1,67 @@
+version: '3'
+
+vars:
+  IMAGE: caelestia-shell-build:latest
+  REPO: '{{.TASKFILE_DIR}}'
+  STAGING: '{{.TASKFILE_DIR}}/build/staging'
+  CONFIG_DIR: '{{.HOME}}/.config/quickshell/caelestia'
+  USER_LIB_DIR: '{{.HOME}}/.local/lib/caelestia'
+  USER_QML_DIR: '{{.HOME}}/.local/lib/qt6/qml'
+  DOCKER_RUN: docker run --rm -v {{.REPO}}:/workspace -u $(id -u):$(id -g) -w /workspace {{.IMAGE}}
+
+tasks:
+  image:
+    desc: Build the Arch build-image (rebuilds only when Dockerfile changes)
+    sources:
+      - Dockerfile
+    cmds:
+      - docker build -t {{.IMAGE}} {{.REPO}}
+
+  build:
+    desc: Compile and stage a deployable artifact tree under build/staging/
+    deps: [image]
+    cmds:
+      - |
+        {{.DOCKER_RUN}} bash -c '
+          set -e
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/
+          cmake --build build
+          rm -rf /workspace/build/staging
+          DESTDIR=/workspace/build/staging cmake --install build
+        '
+
+  install:
+    desc: Move the staged artifacts into user-local dirs
+    deps: [build]
+    cmds:
+      - mkdir -p {{.HOME}}/.config/quickshell {{.HOME}}/.local/lib {{.USER_QML_DIR}}
+      - rm -rf {{.CONFIG_DIR}} {{.USER_LIB_DIR}} {{.USER_QML_DIR}}/Caelestia
+      - mv {{.STAGING}}/etc/xdg/quickshell/caelestia {{.CONFIG_DIR}}
+      - mv {{.STAGING}}/usr/lib/caelestia {{.USER_LIB_DIR}}
+      - mv {{.STAGING}}/usr/lib/qt6/qml/Caelestia {{.USER_QML_DIR}}/Caelestia
+
+  clean:
+    desc: Remove build dir and staging
+    cmds:
+      - rm -rf {{.TASKFILE_DIR}}/build
+
+  uninstall:
+    desc: Remove the user-local install (does NOT touch the AUR package)
+    cmds:
+      - rm -rf {{.CONFIG_DIR}}
+      - rm -rf {{.USER_LIB_DIR}}
+      - rm -rf {{.USER_QML_DIR}}/Caelestia
+
+  run:
+    desc: Launch the shell against the user-local install
+    cmds:
+      - CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH qs -c caelestia
+
+  shell:
+    desc: Drop into a shell inside the build container
+    deps: [image]
+    interactive: true
+    cmds:
+      - docker run --rm -it -v {{.REPO}}:/workspace -u $(id -u):$(id -g) -w /workspace {{.IMAGE}}
