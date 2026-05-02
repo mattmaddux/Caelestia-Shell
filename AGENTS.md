@@ -49,7 +49,8 @@ helpers.
   `Taskfile.yml` (`go-task`) drive everything. `task build` compiles in
   the container and stages a deployable tree at `build/staging/`.
   `task install` moves staging into user-local dirs (host-only, no
-  container). `task run` / `task prod` launch the fork. `task clean` /
+  container). `task prod` launches the fork in the background; `task dev`
+  runs from source for hot-reload. `task clean` /
   `task uninstall` / `task shell` are also there.
 - User-local install layout:
   - QML → `~/.config/quickshell/caelestia/`

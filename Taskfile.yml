@@ -54,11 +54,6 @@ tasks:
       - rm -rf {{.USER_LIB_DIR}}
       - rm -rf {{.USER_QML_DIR}}/Caelestia
 
-  run:
-    desc: Launch the shell against the user-local install
-    cmds:
-      - CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH qs -c caelestia
-
   dev:
     desc: Background the shell against the source repo for live QML hot-reload
     cmds:
@@ -86,10 +81,12 @@ tasks:
   prod:
     desc: Stop the dev shell and launch the user-local install in the background
     cmds:
-      - pkill -if 'qs.*caelestia' || true
-      - sleep 0.3
-      - setsid -f env CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH qs -c caelestia >/dev/null 2>&1 </dev/null
-      - echo "Shell started"
+      - |
+        pkill -if 'qs.*caelestia' || true
+        sleep 0.3
+        ( env CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH \
+            setsid -f qs -c caelestia </dev/null >/dev/null 2>&1 )
+        echo "Shell started"
 
   shell:
     desc: Drop into a shell inside the build container
