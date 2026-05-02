@@ -48,7 +48,7 @@ tasks:
       - rm -rf {{.TASKFILE_DIR}}/build
 
   uninstall:
-    desc: Remove the user-local install (does NOT touch the AUR package)
+    desc: Remove the user-local install
     cmds:
       - rm -rf {{.CONFIG_DIR}}
       - rm -rf {{.USER_LIB_DIR}}
@@ -58,6 +58,38 @@ tasks:
     desc: Launch the shell against the user-local install
     cmds:
       - CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH qs -c caelestia
+
+  dev:
+    desc: Background the shell against the source repo for live QML hot-reload
+    cmds:
+      - |
+        set -e
+        plugin={{.USER_QML_DIR}}/Caelestia/libcaelestiaplugin.so
+        if [ ! -f "$plugin" ]; then
+          echo "Plugin not installed at $plugin." >&2
+          echo "Run 'task install' first." >&2
+          exit 1
+        fi
+        pkill -if 'qs.*caelestia' || true
+        sleep 0.3
+        log=/tmp/caelestia-dev.log
+        env CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH \
+          setsid -f qs -p {{.REPO}} >"$log" 2>&1 </dev/null
+        echo "Dev shell started. Logs: tail -f $log"
+
+  log:
+    desc: Tail the dev shell log (Ctrl+C to exit)
+    interactive: true
+    cmds:
+      - tail -F /tmp/caelestia-dev.log
+
+  prod:
+    desc: Stop the dev shell and launch the user-local install in the background
+    cmds:
+      - pkill -if 'qs.*caelestia' || true
+      - sleep 0.3
+      - setsid -f env CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH qs -c caelestia >/dev/null 2>&1 </dev/null
+      - echo "Shell started"
 
   shell:
     desc: Drop into a shell inside the build container
