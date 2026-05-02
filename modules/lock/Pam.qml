@@ -16,6 +16,10 @@ Scope {
     property string state
     property string fprintState
     property string buffer
+    onBufferChanged: {
+        if (buffer.length === 6 && !passwd.active && state !== "max")
+            passwd.start();
+    }
 
     signal flashMsg
 

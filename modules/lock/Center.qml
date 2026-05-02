@@ -82,32 +82,32 @@ ColumnLayout {
         font.bold: true
     }
 
-    StyledClippingRect {
-        Layout.topMargin: Tokens.spacing.large * 2
-        Layout.alignment: Qt.AlignHCenter
-
-        implicitWidth: root.centerWidth / 2
-        implicitHeight: root.centerWidth / 2
-
-        color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.full
-
-        MaterialIcon {
-            anchors.centerIn: parent
-
-            text: "person"
-            color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Math.floor(root.centerWidth / 4)
-            visible: pfp.status !== Image.Ready
-        }
-
-        CachingImage {
-            id: pfp
-
-            anchors.fill: parent
-            path: `${Paths.home}/.face`
-        }
-    }
+    // StyledClippingRect {
+    //     Layout.topMargin: Tokens.spacing.large * 2
+    //     Layout.alignment: Qt.AlignHCenter
+    //
+    //     implicitWidth: root.centerWidth / 2
+    //     implicitHeight: root.centerWidth / 2
+    //
+    //     color: Colours.tPalette.m3surfaceContainer
+    //     radius: Tokens.rounding.full
+    //
+    //     MaterialIcon {
+    //         anchors.centerIn: parent
+    //
+    //         text: "person"
+    //         color: Colours.palette.m3onSurfaceVariant
+    //         font.pointSize: Math.floor(root.centerWidth / 4)
+    //         visible: pfp.status !== Image.Ready
+    //     }
+    //
+    //     CachingImage {
+    //         id: pfp
+    //
+    //         anchors.fill: parent
+    //         path: `${Paths.home}/.face`
+    //     }
+    // }
 
     StyledRect {
         Layout.alignment: Qt.AlignHCenter
@@ -188,26 +188,38 @@ ColumnLayout {
 
             StyledRect {
                 implicitWidth: implicitHeight
-                implicitHeight: enterIcon.implicitHeight + Tokens.padding.small * 2
+                implicitHeight: backspaceIcon.implicitHeight + Tokens.padding.small * 2
 
                 color: root.lock.pam.buffer ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
                 radius: Tokens.rounding.full
 
                 StateLayer {
                     color: root.lock.pam.buffer ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                    onClicked: root.lock.pam.passwd.start()
+                    onClicked: {
+                        if (root.lock.pam.passwd.active || root.lock.pam.state === "max")
+                            return;
+                        root.lock.pam.buffer = root.lock.pam.buffer.slice(0, -1);
+                    }
                 }
 
                 MaterialIcon {
-                    id: enterIcon
+                    id: backspaceIcon
 
                     anchors.centerIn: parent
-                    text: "arrow_forward"
+                    text: "backspace"
                     color: root.lock.pam.buffer ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                     font.weight: 500
                 }
             }
         }
+    }
+
+    Keypad {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Tokens.spacing.large
+
+        pam: root.lock.pam
+        buttonSize: root.centerWidth / 5
     }
 
     Item {
