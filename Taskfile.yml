@@ -84,8 +84,8 @@ tasks:
       - |
         pkill -if 'qs.*caelestia' || true
         sleep 0.3
-        ( env CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH \
-            setsid -f qs -c caelestia </dev/null >/dev/null 2>&1 )
+        env CAELESTIA_LIB_DIR={{.USER_LIB_DIR}} QML2_IMPORT_PATH={{.USER_QML_DIR}}:$QML2_IMPORT_PATH \
+          setsid -f qs -c caelestia >/dev/null 2>&1 </dev/null
         echo "Shell started"
 
   shell:
