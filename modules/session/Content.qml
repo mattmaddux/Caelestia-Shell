@@ -45,18 +45,6 @@ Column {
         KeyNavigation.down: hibernate
     }
 
-    AnimatedImage {
-        width: Tokens.sizes.session.button
-        height: Tokens.sizes.session.button
-        sourceSize.width: width
-
-        playing: visible
-        asynchronous: true
-        speed: Config.general.sessionGifSpeed
-        source: Paths.absolutePath(Config.paths.sessionGif)
-        fillMode: AnimatedImage.PreserveAspectFit
-    }
-
     SessionButton {
         id: hibernate
 
