@@ -16,34 +16,31 @@ Column {
     spacing: Tokens.spacing.large
 
     SessionButton {
-        id: logout
+        id: lock
 
-        icon: Config.session.icons.logout
-        command: Config.session.commands.logout
+        icon: "lock"
+        command: ["caelestia", "shell", "lock", "lock"]
 
-        KeyNavigation.down: shutdown
+        KeyNavigation.down: hibernate
 
         Component.onCompleted: forceActiveFocus()
 
         Connections {
             function onLauncherChanged(): void {
                 if (!root.visibilities.launcher)
-                    logout.forceActiveFocus();
+                    lock.forceActiveFocus();
             }
 
             target: root.visibilities
         }
     }
 
-    SessionButton {
-        id: shutdown
-
-        icon: Config.session.icons.shutdown
-        command: Config.session.commands.shutdown
-
-        KeyNavigation.up: logout
-        KeyNavigation.down: hibernate
-    }
+    // SessionButton {
+    //     id: logout
+    //
+    //     icon: Config.session.icons.logout
+    //     command: Config.session.commands.logout
+    // }
 
     SessionButton {
         id: hibernate
@@ -51,7 +48,7 @@ Column {
         icon: Config.session.icons.hibernate
         command: Config.session.commands.hibernate
 
-        KeyNavigation.up: shutdown
+        KeyNavigation.up: lock
         KeyNavigation.down: reboot
     }
 
@@ -62,6 +59,16 @@ Column {
         command: Config.session.commands.reboot
 
         KeyNavigation.up: hibernate
+        KeyNavigation.down: shutdown
+    }
+
+    SessionButton {
+        id: shutdown
+
+        icon: Config.session.icons.shutdown
+        command: Config.session.commands.shutdown
+
+        KeyNavigation.up: reboot
     }
 
     component SessionButton: StyledRect {
