@@ -90,6 +90,15 @@ Item {
         onDetachRequested: mode => root.detach(mode)
     }
 
+    Connections {
+        target: WindowInfoBus
+
+        function onOpenRequested(screen): void {
+            if (screen === root.screen)
+                root.detach("winfo");
+        }
+    }
+
     HyprlandFocusGrab {
         active: root.isDetached
         windows: [QsWindow.window]
