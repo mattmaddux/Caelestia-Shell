@@ -185,7 +185,9 @@ Item {
             Component {
                 id: controlsComponent
 
-                Controls {}
+                Controls {
+                    visibilities: root.visibilities
+                }
             }
 
             Component {

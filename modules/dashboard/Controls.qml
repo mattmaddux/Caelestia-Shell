@@ -11,6 +11,8 @@ import qs.services
 Item {
     id: root
 
+    required property DrawerVisibilities visibilities
+
     property string expandedTile: ""
     readonly property bool needsKeyboard: true
 
@@ -78,6 +80,32 @@ Item {
                 checked: AirplaneMode.enabled
                 onClicked: AirplaneMode.toggle()
             }
+
+            Tile {
+                icon: "screen_record"
+                kind: "expand"
+                inactiveColour: Recorder.running ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+                inactiveOnColour: Recorder.running ? Colours.palette.m3onError : Colours.palette.m3secondary
+                onClicked: root.expand("capture")
+            }
+
+            Tile {
+                icon: "grid_view"
+                kind: "expand"
+                onClicked: root.expand("workspaces")
+            }
+
+            Tile {
+                icon: "battery_full"
+                kind: "expand"
+                onClicked: root.expand("performance")
+            }
+
+            Tile {
+                icon: "power_settings_new"
+                kind: "expand"
+                onClicked: root.expand("session")
+            }
         }
     }
 
@@ -144,6 +172,14 @@ Item {
                     switch (root.expandedTile) {
                     case "display":
                         return displayPanel;
+                    case "capture":
+                        return capturePanel;
+                    case "workspaces":
+                        return workspacePanel;
+                    case "performance":
+                        return performancePanel;
+                    case "session":
+                        return sessionPanel;
                     default:
                         return null;
                     }
@@ -154,6 +190,38 @@ Item {
                 id: displayPanel
 
                 DisplayPanel {}
+            }
+
+            Component {
+                id: capturePanel
+
+                CapturePanel {
+                    visibilities: root.visibilities
+                }
+            }
+
+            Component {
+                id: workspacePanel
+
+                WorkspacePanel {
+                    visibilities: root.visibilities
+                }
+            }
+
+            Component {
+                id: performancePanel
+
+                PerformancePanel {
+                    visibilities: root.visibilities
+                }
+            }
+
+            Component {
+                id: sessionPanel
+
+                SessionPanel {
+                    visibilities: root.visibilities
+                }
             }
         }
     }
