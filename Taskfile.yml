@@ -88,6 +88,19 @@ tasks:
           setsid -f qs -c caelestia >/dev/null 2>&1 </dev/null
         echo "Shell started"
 
+  kill:
+    desc: Kill all running Quickshell processes (use when hot-reload state goes weird)
+    cmds:
+      - |
+        pattern='(^|/)(qs|quickshell)( |$)'
+        pkill -if "$pattern" || true
+        sleep 0.3
+        if pgrep -if "$pattern" >/dev/null; then
+          pkill -9 -if "$pattern" || true
+          sleep 0.2
+        fi
+        echo "Quickshell processes killed."
+
   shell:
     desc: Drop into a shell inside the build container
     deps: [image]
