@@ -14,7 +14,7 @@ Item {
     property string expandedTile: ""
     readonly property bool needsKeyboard: true
 
-    readonly property real gridImplicitWidth: Math.max(grid.implicitWidth + Tokens.padding.large * 2, 700)
+    readonly property real gridImplicitWidth: Math.max(grid.implicitWidth + Tokens.padding.large * 2, 900)
     readonly property real gridImplicitHeight: Math.max(grid.implicitHeight + Tokens.padding.large * 2, 240)
     readonly property real detailImplicitWidth: detailLoader.item?.implicitWidth ?? gridImplicitWidth
     readonly property real detailImplicitHeight: detailLoader.item?.implicitHeight ?? gridImplicitHeight
@@ -51,14 +51,32 @@ Item {
             anchors.top: parent.top
             anchors.margins: Tokens.padding.large
 
-            columns: 4
+            columns: 5
             rowSpacing: Tokens.spacing.normal
             columnSpacing: Tokens.spacing.normal
 
             Tile {
                 icon: "desktop_windows"
                 kind: "expand"
-                expandedTo: "display"
+                onClicked: root.expand("display")
+            }
+
+            Tile {
+                icon: "videogame_asset"
+                checked: GameMode.enabled
+                onClicked: GameMode.enabled = !GameMode.enabled
+            }
+
+            Tile {
+                icon: "notifications_off"
+                checked: Notifs.dnd
+                onClicked: Notifs.dnd = !Notifs.dnd
+            }
+
+            Tile {
+                icon: "flight"
+                checked: AirplaneMode.enabled
+                onClicked: AirplaneMode.toggle()
             }
         }
     }
@@ -144,7 +162,6 @@ Item {
         id: tile
 
         property string kind: "toggle"
-        property string expandedTo: ""
 
         Layout.preferredWidth: 160
         Layout.preferredHeight: 96
@@ -157,10 +174,5 @@ Item {
         font.pointSize: Tokens.font.size.extraLarge * 2
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
         radiusAnim.easing: Tokens.anim.expressiveFastSpatial
-
-        onClicked: {
-            if (kind === "expand" && expandedTo !== "")
-                root.expand(expandedTo);
-        }
     }
 }
