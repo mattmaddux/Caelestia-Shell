@@ -14,18 +14,18 @@ import qs.services
 Item {
     id: root
 
+    readonly property string title: qsTr("Display")
     readonly property var defaultScaleOptions: [1.0, 1.25, 1.5, 1.75, 2.0]
     readonly property var internalScaleOptions: [1.0, 1.25, 1.6, 2.0]
 
+    implicitWidth: Math.max(contentLayout.implicitWidth, 720)
+    implicitHeight: contentLayout.implicitHeight
+
     ColumnLayout {
+        id: contentLayout
+
         anchors.fill: parent
         spacing: Tokens.spacing.large
-
-        StyledText {
-            text: qsTr("Display")
-            font.pointSize: Tokens.font.size.large
-            font.weight: 600
-        }
 
         Repeater {
             model: Brightness.monitors
@@ -35,10 +35,6 @@ Item {
                 Layout.fillWidth: true
                 brightnessMonitor: modelData
             }
-        }
-
-        Item {
-            Layout.fillHeight: true
         }
     }
 
@@ -91,6 +87,7 @@ Item {
             onTriggered: Hyprland.refreshMonitors()
         }
 
+        implicitWidth: cardLayout.implicitWidth + Tokens.padding.large * 2
         implicitHeight: cardLayout.implicitHeight + Tokens.padding.large * 2
         radius: Tokens.rounding.normal
         color: Colours.tPalette.m3surfaceContainer

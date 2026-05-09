@@ -14,8 +14,13 @@ Item {
     property string expandedTile: ""
     readonly property bool needsKeyboard: true
 
-    implicitWidth: 840
-    implicitHeight: 560
+    readonly property real gridImplicitWidth: Math.max(grid.implicitWidth + Tokens.padding.large * 2, 700)
+    readonly property real gridImplicitHeight: Math.max(grid.implicitHeight + Tokens.padding.large * 2, 240)
+    readonly property real detailImplicitWidth: detailLoader.item?.implicitWidth ?? gridImplicitWidth
+    readonly property real detailImplicitHeight: detailLoader.item?.implicitHeight ?? gridImplicitHeight
+
+    implicitWidth: expandedTile === "" ? gridImplicitWidth : detailImplicitWidth
+    implicitHeight: expandedTile === "" ? gridImplicitHeight : detailImplicitHeight
 
     function expand(id: string): void {
         root.expandedTile = id;
@@ -43,7 +48,6 @@ Item {
             id: grid
 
             anchors.left: parent.left
-            anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: Tokens.padding.large
 
@@ -74,7 +78,10 @@ Item {
         }
 
         sourceComponent: Item {
-            anchors.fill: parent
+            id: detailItem
+
+            implicitWidth: Math.max(detailTitle.x + detailTitle.implicitWidth + Tokens.padding.normal, innerLoader.implicitWidth + Tokens.padding.large * 2)
+            implicitHeight: backButton.y + backButton.implicitHeight + Tokens.spacing.normal + innerLoader.implicitHeight + Tokens.padding.large
 
             IconButton {
                 id: backButton
@@ -86,17 +93,34 @@ Item {
 
                 icon: "arrow_back"
                 type: IconButton.Tonal
-                font.pointSize: Tokens.font.size.extraLarge
-                padding: Tokens.padding.normal
+                font.pointSize: Tokens.font.size.large
+                padding: Tokens.padding.small
                 onClicked: root.collapse()
             }
 
+            StyledText {
+                id: detailTitle
+
+                anchors.verticalCenter: backButton.verticalCenter
+                anchors.left: backButton.right
+                anchors.leftMargin: Tokens.spacing.normal
+
+                text: innerLoader.item?.title ?? ""
+                font.pointSize: Tokens.font.size.large
+                font.weight: 600
+            }
+
             Loader {
+                id: innerLoader
+
                 anchors.top: backButton.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                anchors.margins: Tokens.padding.large
+                anchors.leftMargin: Tokens.padding.large
+                anchors.rightMargin: Tokens.padding.large
+                anchors.topMargin: Tokens.spacing.normal
+                anchors.bottomMargin: Tokens.padding.large
 
                 sourceComponent: {
                     switch (root.expandedTile) {
