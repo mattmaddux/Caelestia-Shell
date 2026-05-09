@@ -12,15 +12,7 @@ Item {
     id: root
 
     required property DrawerVisibilities visibilities
-    readonly property bool needsKeyboard: {
-        const count = repeater.count;
-        for (let i = 0; i < count; i++) {
-            const item = repeater.itemAt(i) as Loader;
-            if (item?.sourceComponent === mediaComponent && (item?.item as MediaWrapper)?.needsKeyboard)
-                return true;
-        }
-        return false;
-    }
+    readonly property bool needsKeyboard: true
     required property DashboardState dashState
     required property FileDialog facePicker
 
@@ -31,6 +23,12 @@ Item {
                 iconName: "dashboard",
                 text: qsTr("Dashboard"),
                 enabled: Config.dashboard.showDashboard
+            },
+            {
+                component: controlsComponent,
+                iconName: "tune",
+                text: qsTr("Controls"),
+                enabled: true
             },
             {
                 component: mediaComponent,
@@ -59,6 +57,19 @@ Item {
 
     implicitWidth: nonAnimWidth
     implicitHeight: nonAnimHeight
+
+    focus: true
+    Component.onCompleted: forceActiveFocus()
+
+    Keys.onPressed: event => {
+        if (event.key < Qt.Key_1 || event.key > Qt.Key_9)
+            return;
+        const idx = event.key - Qt.Key_1;
+        if (idx >= root.dashboardTabs.length)
+            return;
+        root.dashState.currentTab = idx;
+        event.accepted = true;
+    }
 
     Tabs {
         id: tabs
@@ -169,6 +180,12 @@ Item {
                     dashState: root.dashState
                     facePicker: root.facePicker
                 }
+            }
+
+            Component {
+                id: controlsComponent
+
+                Controls {}
             }
 
             Component {

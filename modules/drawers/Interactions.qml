@@ -20,6 +20,7 @@ CustomMouseArea {
 
     property point dragStart
     property bool dashboardShortcutActive
+    property bool dashboardKeyboardActive
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
 
@@ -246,10 +247,12 @@ CustomMouseArea {
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
                 if (!inDashboardArea) {
                     root.dashboardShortcutActive = true;
+                    root.dashboardKeyboardActive = true;
                 }
             } else {
                 // Dashboard hidden, clear shortcut flag
                 root.dashboardShortcutActive = false;
+                root.dashboardKeyboardActive = false;
             }
         }
 
