@@ -96,6 +96,12 @@ Item {
             }
 
             Tile {
+                icon: "volume_up"
+                kind: "expand"
+                onClicked: root.expand("sound")
+            }
+
+            Tile {
                 icon: "battery_full"
                 kind: "expand"
                 onClicked: root.expand("performance")
@@ -176,6 +182,8 @@ Item {
                         return capturePanel;
                     case "workspaces":
                         return workspacePanel;
+                    case "sound":
+                        return soundPanel;
                     case "performance":
                         return performancePanel;
                     case "session":
@@ -204,6 +212,14 @@ Item {
                 id: workspacePanel
 
                 WorkspacePanel {
+                    visibilities: root.visibilities
+                }
+            }
+
+            Component {
+                id: soundPanel
+
+                SoundPanel {
                     visibilities: root.visibilities
                 }
             }
