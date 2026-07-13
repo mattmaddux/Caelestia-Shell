@@ -7,11 +7,13 @@ import Quickshell.Widgets
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
+import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root
 
     required property DrawerVisibilities visibilities
+    required property BarPopouts.Wrapper popouts
     readonly property bool needsKeyboard: true
     required property DashboardState dashState
     required property FileDialog facePicker
@@ -187,6 +189,7 @@ Item {
 
                 Controls {
                     visibilities: root.visibilities
+                    popouts: root.popouts
                 }
             }
 

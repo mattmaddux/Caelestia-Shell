@@ -6,12 +6,14 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
+import qs.modules.bar.popouts as BarPopouts
 import qs.utils
 
 Item {
     id: root
 
     required property DrawerVisibilities visibilities
+    required property BarPopouts.Wrapper popouts
     readonly property bool needsKeyboard: (content.item as Content)?.needsKeyboard ?? false
     readonly property DashboardState dashState: DashboardState {
         reloadableId: "dashboardState"
@@ -54,6 +56,7 @@ Item {
 
         sourceComponent: Content {
             visibilities: root.visibilities
+            popouts: root.popouts
             dashState: root.dashState
             facePicker: root.facePicker
         }

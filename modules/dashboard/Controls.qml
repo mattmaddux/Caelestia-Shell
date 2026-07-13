@@ -7,12 +7,14 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.modules.bar.popouts as BarPopouts
 import qs.services
 
 Item {
     id: root
 
     required property DrawerVisibilities visibilities
+    required property BarPopouts.Wrapper popouts
 
     property string expandedTile: ""
     readonly property bool needsKeyboard: true
@@ -117,6 +119,16 @@ Item {
             Tile {
                 icon: "keyboard"
                 onClicked: Quickshell.execDetached(["pkill", internalChecked ? "-SIGUSR2" : "-SIGUSR1", "wvkbd-deskintl"])
+            }
+
+            Tile {
+                icon: "settings"
+                kind: "action"
+                inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                onClicked: {
+                    root.visibilities.dashboard = false;
+                    root.popouts.detach("network");
+                }
             }
         }
     }

@@ -118,6 +118,7 @@ Item {
         id: dashboard
 
         visibilities: root.visibilities
+        popouts: popoutsWrapper.content
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
