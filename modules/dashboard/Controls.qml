@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import "controls"
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -111,6 +112,11 @@ Item {
                 icon: "power_settings_new"
                 kind: "expand"
                 onClicked: root.expand("session")
+            }
+
+            Tile {
+                icon: "keyboard"
+                onClicked: Quickshell.execDetached(["pkill", internalChecked ? "-SIGUSR2" : "-SIGUSR1", "wvkbd-deskintl"])
             }
         }
     }

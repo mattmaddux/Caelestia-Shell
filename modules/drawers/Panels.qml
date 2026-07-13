@@ -20,6 +20,7 @@ Item {
     required property DrawerVisibilities visibilities
     required property Bar.BarWrapper bar
     required property real borderThickness
+    required property real topBarThickness
 
     readonly property alias osd: osd
     readonly property alias osdWrapper: osdWrapper
@@ -37,6 +38,13 @@ Item {
     anchors.fill: parent
     anchors.margins: borderThickness
     anchors.leftMargin: bar.implicitWidth
+    // Top edge is the thick top bar, not the thin border, so panels (esp. the
+    // top-anchored dashboard) sit below the top bar instead of behind it.
+    anchors.topMargin: topBarThickness
+    // Clip to this inset area so sliding panels emerge from *behind* the top bar
+    // (and frame) rather than rendering up through it — e.g. the dashboard no
+    // longer shows through the picker numbers on the way out.
+    clip: true
 
     Item {
         id: osdWrapper

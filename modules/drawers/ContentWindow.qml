@@ -12,6 +12,7 @@ import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.bar
+import qs.modules.workspacegroups
 
 StyledWindow {
     id: root
@@ -33,6 +34,9 @@ StyledWindow {
     }
     property real borderThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
+    // Top edge of the frame is thickened just enough to host the workspace-group
+    // picker (its content height plus padding); collapses in fullscreen.
+    readonly property real topBarThickness: hasFullscreen ? 0 : groupPicker.implicitHeight + Tokens.padding.small * 2
     property real borderRounding: hasFullscreen ? 0 : contentItem.Config.border.rounding
     property real shadowOpacity: hasFullscreen ? 0 : 0.7
 
@@ -143,7 +147,7 @@ StyledWindow {
             radius: root.borderRounding
             borderLeft: bar.implicitWidth - anchors.margins
             borderRight: root.borderThickness - anchors.margins
-            borderTop: root.borderThickness - anchors.margins
+            borderTop: root.topBarThickness - anchors.margins
             borderBottom: root.borderThickness - anchors.margins
         }
 
@@ -229,6 +233,7 @@ StyledWindow {
         Component.onCompleted: Visibilities.load(root.screen, this)
     }
 
+
     Interactions {
         id: interactions
 
@@ -238,6 +243,7 @@ StyledWindow {
         panels: panels
         bar: bar
         borderThickness: root.borderLayoutThickness
+        topBarThickness: root.topBarThickness
         fullscreen: root.hasFullscreen
 
         Panels {
@@ -247,6 +253,7 @@ StyledWindow {
             visibilities: visibilities
             bar: bar
             borderThickness: root.borderThickness
+            topBarThickness: root.topBarThickness
 
             utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
             utilities.deformMatrix: utilsBg.rawDeformMatrix
@@ -293,13 +300,30 @@ StyledWindow {
         }
     }
 
+    Item {
+        id: topBar
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: root.topBarThickness
+
+        visible: !root.hasFullscreen
+
+        WorkspaceGroupBar {
+            id: groupPicker
+
+            anchors.centerIn: parent
+        }
+    }
+
     component PanelBg: BlobRect {
         required property Item panel
         property real deformAmount: 0.15
 
         group: blobGroup
         x: panel.x + bar.implicitWidth
-        y: panel.y + root.borderThickness
+        y: panel.y + root.topBarThickness
         implicitWidth: panel.width
         implicitHeight: panel.height
         radius: Tokens.rounding.large
