@@ -79,14 +79,13 @@ StyledRect {
                         }
                     }
 
-                    // Match utilities Toggles radius styling
                     // Each button has full rounding (not connected) since they have spacing
                     radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : Tokens.rounding.normal
 
-                    // Match utilities Toggles inactive color
+                    // Dimmed a step back from the container behind it
                     inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
 
-                    // Adjust width similar to utilities toggles
+                    // Widen slightly when pressed or checked
                     Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
 
                     onClicked: {
