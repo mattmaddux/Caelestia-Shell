@@ -1,20 +1,22 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs.components.misc
+import qs.services
 
 Scope {
-    property alias lock: lock
+    property alias lock: sessionLock
 
     WlSessionLock {
-        id: lock
+        id: sessionLock
 
         signal unlock
 
         LockSurface {
-            lock: lock
+            lock: sessionLock
             pam: pam
         }
     }
@@ -22,7 +24,19 @@ Scope {
     Pam {
         id: pam
 
-        lock: lock
+        lock: sessionLock
+    }
+
+    Connections {
+        function onLockRequested(): void {
+            sessionLock.locked = true;
+        }
+
+        function onUnlockRequested(): void {
+            sessionLock.unlock();
+        }
+
+        target: SessionLock
     }
 
     // qmllint disable unresolved-type
@@ -30,7 +44,7 @@ Scope {
         // qmllint enable unresolved-type
         name: "lock"
         description: "Lock the current session"
-        onPressed: lock.locked = true
+        onPressed: sessionLock.locked = true
     }
 
     // qmllint disable unresolved-type
@@ -38,20 +52,20 @@ Scope {
         // qmllint enable unresolved-type
         name: "unlock"
         description: "Unlock the current session"
-        onPressed: lock.unlock()
+        onPressed: sessionLock.unlock()
     }
 
     IpcHandler {
         function lock(): void {
-            lock.locked = true;
+            sessionLock.locked = true;
         }
 
         function unlock(): void {
-            lock.unlock();
+            sessionLock.unlock();
         }
 
         function isLocked(): bool {
-            return lock.locked;
+            return sessionLock.locked;
         }
 
         target: "lock"

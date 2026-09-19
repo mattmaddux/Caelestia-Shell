@@ -19,7 +19,7 @@ Column {
         id: lock
 
         icon: "lock"
-        command: ["caelestia", "shell", "lock", "lock"]
+        action: () => SessionLock.lock()
 
         KeyNavigation.down: hibernate
 
@@ -75,7 +75,8 @@ Column {
         id: button
 
         required property string icon
-        required property list<string> command
+        property list<string> command
+        property var action: () => Quickshell.execDetached(button.command)
 
         implicitWidth: Tokens.sizes.session.button
         implicitHeight: Tokens.sizes.session.button
@@ -83,8 +84,8 @@ Column {
         radius: Tokens.rounding.large
         color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
 
-        Keys.onEnterPressed: Quickshell.execDetached(button.command)
-        Keys.onReturnPressed: Quickshell.execDetached(button.command)
+        Keys.onEnterPressed: button.action()
+        Keys.onReturnPressed: button.action()
         Keys.onEscapePressed: root.visibilities.session = false
         Keys.onPressed: event => {
             if (!Config.session.vimKeybinds)
@@ -112,7 +113,7 @@ Column {
         StateLayer {
             radius: parent.radius
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            onClicked: Quickshell.execDetached(button.command)
+            onClicked: button.action()
         }
 
         MaterialIcon {

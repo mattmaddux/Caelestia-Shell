@@ -49,7 +49,7 @@ Item {
                     Layout.fillWidth: true
                     icon: "lock"
                     text: qsTr("Lock")
-                    onClicked: root.dismissAnd(() => Quickshell.execDetached(["caelestia", "shell", "lock", "lock"]))
+                    onClicked: root.dismissAnd(() => SessionLock.lock())
                 }
 
                 SessionAction {
