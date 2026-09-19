@@ -23,7 +23,6 @@ CustomMouseArea {
     property bool dashboardShortcutActive
     property bool dashboardKeyboardActive
     property bool osdShortcutActive
-    property bool utilitiesShortcutActive
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.topBarThickness + panel.y;
@@ -76,9 +75,6 @@ CustomMouseArea {
 
             if (!dashboardShortcutActive)
                 visibilities.dashboard = false;
-
-            if (!utilitiesShortcutActive)
-                visibilities.utilities = false;
 
             if (!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) {
                 popouts.hasCurrent = false;
@@ -199,17 +195,6 @@ CustomMouseArea {
                 visibilities.dashboard = false;
         }
 
-        // Show utilities on hover
-        const showUtilities = inBottomPanel(panels.utilities, x, y, true);
-
-        // Always update visibility based on hover if not in shortcut mode
-        if (!utilitiesShortcutActive) {
-            visibilities.utilities = showUtilities;
-        } else if (showUtilities) {
-            // If hovering over utilities area while in shortcut mode, transition to hover control
-            utilitiesShortcutActive = false;
-        }
-
         // Show popouts on hover
         if (x < bar.implicitWidth) {
             bar.checkPopout(y);
@@ -226,7 +211,6 @@ CustomMouseArea {
             if (!root.visibilities.launcher) {
                 root.dashboardShortcutActive = false;
                 root.osdShortcutActive = false;
-                root.utilitiesShortcutActive = false;
 
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
@@ -267,19 +251,6 @@ CustomMouseArea {
             } else {
                 // OSD hidden, clear shortcut flag
                 root.osdShortcutActive = false;
-            }
-        }
-
-        function onUtilitiesChanged() {
-            if (root.visibilities.utilities) {
-                // Utilities became visible, immediately check if this should be shortcut mode
-                const inUtilitiesArea = root.inBottomPanel(root.panels.utilities, root.mouseX, root.mouseY);
-                if (!inUtilitiesArea) {
-                    root.utilitiesShortcutActive = true;
-                }
-            } else {
-                // Utilities hidden, clear shortcut flag
-                root.utilitiesShortcutActive = false;
             }
         }
 

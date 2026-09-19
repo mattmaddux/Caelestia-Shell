@@ -27,8 +27,8 @@ PathView {
         let outerMargins = 0;
         if (panels.popouts.hasCurrent && panels.popouts.currentCenter + panels.popouts.nonAnimHeight / 2 > screen.height - content.implicitHeight - Config.border.thickness * 2)
             outerMargins = panels.popouts.nonAnimWidth;
-        if ((visibilities.utilities || visibilities.sidebar) && panels.utilities.implicitWidth > outerMargins)
-            outerMargins = panels.utilities.implicitWidth;
+        if (visibilities.sidebar && panels.sidebar.implicitWidth > outerMargins)
+            outerMargins = panels.sidebar.implicitWidth;
         const maxWidth = screen.width - Config.border.rounding * 4 - (barMargins + outerMargins) * 2;
 
         if (maxWidth <= 0)

@@ -180,8 +180,6 @@ StyledWindow {
             panel: panels.sidebar
             deformAmount: 0.03
             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
-            bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
         }
 
         PanelBg {
@@ -197,15 +195,6 @@ StyledWindow {
             id: notifsBg
 
             panel: panels.notifications
-        }
-
-        PanelBg {
-            id: utilsBg
-
-            panel: panels.utilities
-            deformAmount: panels.sidebar.visible ? 0.1 : 0.15
-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [sidebarBg]
-            topLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
         }
 
         PanelBg {
@@ -255,9 +244,6 @@ StyledWindow {
             borderThickness: root.borderThickness
             topBarThickness: root.topBarThickness
 
-            utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
-            utilities.deformMatrix: utilsBg.rawDeformMatrix
-
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
             }
@@ -275,9 +261,6 @@ StyledWindow {
             }
             notifications.transform: Matrix4x4 {
                 matrix: notifsBg.deformMatrix
-            }
-            utilities.transform: Matrix4x4 {
-                matrix: utilsBg.deformMatrix
             }
             popouts.transform: Matrix4x4 {
                 matrix: popoutBg.deformMatrix
