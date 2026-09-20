@@ -30,6 +30,8 @@ Item {
     property real currentCenter
 
     property string detachedMode
+    // Window the detached winfo popup should describe; null falls back to the active one
+    property var winfoTarget: null
     property string queuedMode
 
     // Dummy object so Tokens attached prop resolves to global config
@@ -59,6 +61,7 @@ Item {
     function close(): void {
         hasCurrent = false;
         detachedMode = "";
+        winfoTarget = null;
     }
 
     implicitWidth: nonAnimWidth
@@ -93,9 +96,11 @@ Item {
     Connections {
         target: WindowInfoBus
 
-        function onOpenRequested(screen): void {
-            if (screen === root.screen)
+        function onOpenRequested(screen, client): void {
+            if (screen === root.screen) {
+                root.winfoTarget = client ?? null;
                 root.detach("winfo");
+            }
         }
     }
 
@@ -132,7 +137,7 @@ Item {
 
         sourceComponent: WindowInfo {
             screen: root.screen
-            client: Hypr.activeToplevel
+            client: root.winfoTarget ?? Hypr.activeToplevel
         }
     }
 

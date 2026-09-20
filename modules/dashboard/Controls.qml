@@ -99,6 +99,12 @@ Item {
             }
 
             Tile {
+                icon: "select_window_2"
+                kind: "expand"
+                onClicked: root.expand("windows")
+            }
+
+            Tile {
                 icon: "volume_up"
                 kind: "expand"
                 onClicked: root.expand("sound")
@@ -200,6 +206,8 @@ Item {
                         return capturePanel;
                     case "workspaces":
                         return workspacePanel;
+                    case "windows":
+                        return windowsPanel;
                     case "sound":
                         return soundPanel;
                     case "performance":
@@ -247,6 +255,15 @@ Item {
 
                 PerformancePanel {
                     visibilities: root.visibilities
+                }
+            }
+
+            Component {
+                id: windowsPanel
+
+                WindowsPanel {
+                    visibilities: root.visibilities
+                    popouts: root.popouts
                 }
             }
 

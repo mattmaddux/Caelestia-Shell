@@ -78,7 +78,7 @@ Item {
             ActionButton {
                 icon: "info"
                 onClicked: {
-                    WindowInfoBus.openRequested(root.screen);
+                    WindowInfoBus.openRequested(root.screen, root.target);
                     root.close();
                 }
             }
