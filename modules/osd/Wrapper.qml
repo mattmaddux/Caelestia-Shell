@@ -11,13 +11,13 @@ Item {
 
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
-    required property bool sidebarOrSessionVisible
+    required property bool sidebarVisible
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
     readonly property bool shouldBeActive: visibilities.osd && Config.osd.enabled
     property real offsetScale: shouldBeActive ? 0 : 1
-    property real sidebarOffset: sidebarOrSessionVisible ? 12 : 0
+    property real sidebarOffset: sidebarVisible ? 12 : 0
 
     property real volume
     property bool muted

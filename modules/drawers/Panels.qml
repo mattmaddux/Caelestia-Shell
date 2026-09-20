@@ -7,7 +7,6 @@ import qs.modules.dashboard as Dashboard
 import qs.modules.launcher as Launcher
 import qs.modules.notifications as Notifications
 import qs.modules.osd as Osd
-import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
@@ -24,8 +23,6 @@ Item {
     readonly property alias osd: osd
     readonly property alias osdWrapper: osdWrapper
     readonly property alias notifications: notifications
-    readonly property alias session: session
-    readonly property alias sessionWrapper: sessionWrapper
     readonly property alias launcher: launcher
     readonly property alias dashboard: dashboard
     readonly property alias popouts: popoutsWrapper.content
@@ -49,8 +46,8 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
-        clip: sidebar.visible || session.visible
+        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
+        clip: sidebar.visible
 
         implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
         implicitHeight: osd.implicitHeight
@@ -60,7 +57,7 @@ Item {
 
             screen: root.screen
             visibilities: root.visibilities
-            sidebarOrSessionVisible: sidebar.visible || session.visible
+            sidebarVisible: sidebar.visible
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -73,32 +70,9 @@ Item {
         visibilities: root.visibilities
         sidebarPanel: sidebar
         osdPanel: osdWrapper
-        sessionPanel: sessionWrapper
 
         anchors.top: parent.top
         anchors.right: parent.right
-    }
-
-    Item {
-        id: sessionWrapper
-
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
-        clip: sidebar.visible
-
-        implicitWidth: session.implicitWidth * (1 - session.offsetScale)
-        implicitHeight: session.implicitHeight
-
-        Session.Wrapper {
-            id: session
-
-            visibilities: root.visibilities
-            sidebarVisible: sidebar.visible
-
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-        }
     }
 
     Launcher.Wrapper {

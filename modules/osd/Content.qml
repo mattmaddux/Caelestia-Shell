@@ -53,7 +53,7 @@ Item {
 
         // Microphone volume
         WrappedLoader {
-            shouldBeActive: Config.osd.enableMicrophone && (!Config.osd.enableBrightness || !root.visibilities.session)
+            shouldBeActive: Config.osd.enableMicrophone
 
             sourceComponent: CustomMouseArea {
                 function onWheel(event: WheelEvent) {

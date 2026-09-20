@@ -35,14 +35,6 @@ Region {
     }
 
     R {
-        id: sessionRegion
-
-        panel: root.panels.sessionWrapper
-        x: root.win.width - width
-        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width
-    }
-
-    R {
         id: sidebarRegion
 
         panel: root.panels.sidebar
@@ -53,7 +45,7 @@ Region {
     R {
         panel: root.panels.osdWrapper
         x: root.win.width - width
-        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + sessionRegion.width
+        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + sidebarRegion.width
     }
 
     R {

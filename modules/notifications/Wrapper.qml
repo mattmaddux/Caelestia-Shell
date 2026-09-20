@@ -7,7 +7,6 @@ Item {
     required property DrawerVisibilities visibilities
     required property Item sidebarPanel
     property alias osdPanel: content.osdPanel
-    property alias sessionPanel: content.sessionPanel
 
     visible: height > 0
     anchors.topMargin: -5

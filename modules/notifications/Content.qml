@@ -12,7 +12,6 @@ Item {
 
     required property DrawerVisibilities visibilities
     required property Item osdPanel
-    required property Item sessionPanel
     readonly property int padding: Tokens.padding.large
 
     anchors.top: parent.top
@@ -31,12 +30,6 @@ Item {
 
         if (visibilities.osd) {
             const h = osdPanel.y - Config.border.rounding * 2 - padding * 2;
-            if (height > h)
-                height = h;
-        }
-
-        if (visibilities.session) {
-            const h = sessionPanel.y - Config.border.rounding * 2 - padding * 2;
             if (height > h)
                 height = h;
         }
