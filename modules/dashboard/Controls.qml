@@ -9,6 +9,7 @@ import qs.components
 import qs.components.controls
 import qs.modules.bar.popouts as BarPopouts
 import qs.services
+import qs.utils
 
 Item {
     id: root
@@ -102,6 +103,12 @@ Item {
                 icon: "select_window_2"
                 kind: "expand"
                 onClicked: root.expand("windows")
+            }
+
+            Tile {
+                icon: Nmcli.wifiEnabled ? Icons.getNetworkIcon(Nmcli.active?.strength ?? 0) : "wifi_off"
+                kind: "expand"
+                onClicked: root.expand("wifi")
             }
 
             Tile {
@@ -208,6 +215,8 @@ Item {
                         return workspacePanel;
                     case "windows":
                         return windowsPanel;
+                    case "wifi":
+                        return wifiPanel;
                     case "sound":
                         return soundPanel;
                     case "performance":
@@ -256,6 +265,12 @@ Item {
                 PerformancePanel {
                     visibilities: root.visibilities
                 }
+            }
+
+            Component {
+                id: wifiPanel
+
+                WifiPanel {}
             }
 
             Component {
