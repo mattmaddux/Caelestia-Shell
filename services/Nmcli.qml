@@ -16,7 +16,11 @@ Singleton {
     property string activeConnection: ""
     property bool wifiEnabled: true
     readonly property bool scanning: rescanProc.running
-    readonly property list<AccessPoint> networks: []
+    // Not readonly: getNetworks reassigns this to emit a change signal.
+    // QML list<T> properties do not notify on in-place push/splice, so bindings
+    // on networks (including 'active', which drives the bar status icon) would
+    // otherwise evaluate once and never update.
+    property list<AccessPoint> networks: []
     readonly property AccessPoint active: networks.find(n => n.active) ?? null
     property list<string> savedConnections: []
     property list<string> savedConnectionSsids: []
@@ -781,6 +785,10 @@ Singleton {
                     }));
                 }
             }
+
+            // Reassign so dependent bindings re-evaluate; the AccessPoint
+            // instances are unchanged, only the list identity differs
+            root.networks = rNetworks.slice();
 
             if (callback)
                 callback(root.networks);
