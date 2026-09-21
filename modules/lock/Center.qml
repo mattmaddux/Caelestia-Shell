@@ -20,7 +20,7 @@ ColumnLayout {
     Layout.fillWidth: false
     Layout.fillHeight: true
 
-    spacing: Tokens.spacing.large * 2
+    spacing: Tokens.spacing.large * 2 * root.centerScale
 
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
@@ -73,7 +73,7 @@ ColumnLayout {
 
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: -Tokens.padding.large * 2
+        Layout.topMargin: -Tokens.padding.large * 2 * root.centerScale
 
         text: Time.format("dddd, d MMMM yyyy")
         color: Colours.palette.m3tertiary
@@ -216,7 +216,7 @@ ColumnLayout {
 
     Keypad {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.large * root.centerScale
 
         pam: root.lock.pam
         buttonSize: root.centerWidth / 5
@@ -224,7 +224,7 @@ ColumnLayout {
 
     Item {
         Layout.fillWidth: true
-        Layout.topMargin: -Tokens.spacing.large
+        Layout.topMargin: -Tokens.spacing.large * root.centerScale
 
         implicitHeight: Math.max(message.implicitHeight, stateMessage.implicitHeight)
 
