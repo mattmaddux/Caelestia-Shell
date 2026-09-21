@@ -30,6 +30,44 @@ Item {
         }
     }
 
+    // Tab metadata lives here rather than in Content so the top bar can render
+    // the strip without owning the panes. Content resolves id -> Component.
+    readonly property var dashboardTabs: {
+        const allTabs = [
+            {
+                id: "dash",
+                iconName: "dashboard",
+                text: qsTr("Dashboard"),
+                enabled: Config.dashboard.showDashboard
+            },
+            {
+                id: "controls",
+                iconName: "tune",
+                text: qsTr("Controls"),
+                enabled: true
+            },
+            {
+                id: "media",
+                iconName: "queue_music",
+                text: qsTr("Media"),
+                enabled: Config.dashboard.showMedia
+            },
+            {
+                id: "performance",
+                iconName: "speed",
+                text: qsTr("Performance"),
+                enabled: Config.dashboard.showPerformance && (Config.dashboard.performance.showCpu || Config.dashboard.performance.showGpu || Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork || Config.dashboard.performance.showBattery)
+            },
+            {
+                id: "weather",
+                iconName: "cloud",
+                text: qsTr("Weather"),
+                enabled: Config.dashboard.showWeather
+            }
+        ];
+        return allTabs.filter(tab => tab.enabled);
+    }
+
     readonly property real nonAnimHeight: state === "visible" ? ((content.item as Content)?.nonAnimHeight ?? 0) : 0
     readonly property bool shouldBeActive: visibilities.dashboard && Config.dashboard.enabled
     property real offsetScale: shouldBeActive ? 0 : 1
@@ -59,6 +97,7 @@ Item {
             popouts: root.popouts
             dashState: root.dashState
             facePicker: root.facePicker
+            dashboardTabs: root.dashboardTabs
         }
     }
 }

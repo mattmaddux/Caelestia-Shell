@@ -17,45 +17,26 @@ Item {
     readonly property bool needsKeyboard: true
     required property DashboardState dashState
     required property FileDialog facePicker
+    required property var dashboardTabs
 
-    readonly property var dashboardTabs: {
-        const allTabs = [
-            {
-                component: dashComponent,
-                iconName: "dashboard",
-                text: qsTr("Dashboard"),
-                enabled: Config.dashboard.showDashboard
-            },
-            {
-                component: controlsComponent,
-                iconName: "tune",
-                text: qsTr("Controls"),
-                enabled: true
-            },
-            {
-                component: mediaComponent,
-                iconName: "queue_music",
-                text: qsTr("Media"),
-                enabled: Config.dashboard.showMedia
-            },
-            {
-                component: performanceComponent,
-                iconName: "speed",
-                text: qsTr("Performance"),
-                enabled: Config.dashboard.showPerformance && (Config.dashboard.performance.showCpu || Config.dashboard.performance.showGpu || Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork || Config.dashboard.performance.showBattery)
-            },
-            {
-                component: weatherComponent,
-                iconName: "cloud",
-                text: qsTr("Weather"),
-                enabled: Config.dashboard.showWeather
-            }
-        ];
-        return allTabs.filter(tab => tab.enabled);
+    function componentFor(id: string): Component {
+        switch (id) {
+        case "dash":
+            return dashComponent;
+        case "controls":
+            return controlsComponent;
+        case "media":
+            return mediaComponent;
+        case "performance":
+            return performanceComponent;
+        case "weather":
+            return weatherComponent;
+        }
+        return null;
     }
 
     readonly property real nonAnimWidth: view.implicitWidth + viewWrapper.anchors.margins * 2
-    readonly property real nonAnimHeight: tabs.implicitHeight + tabs.anchors.topMargin + view.implicitHeight + viewWrapper.anchors.margins * 2
+    readonly property real nonAnimHeight: view.implicitHeight + viewWrapper.anchors.margins * 2
 
     implicitWidth: nonAnimWidth
     implicitHeight: nonAnimHeight
@@ -73,23 +54,10 @@ Item {
         event.accepted = true;
     }
 
-    Tabs {
-        id: tabs
-
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.topMargin: Tokens.padding.normal
-        anchors.margins: Tokens.padding.large
-
-        dashState: root.dashState
-        tabs: root.dashboardTabs
-    }
-
     ClippingRectangle {
         id: viewWrapper
 
-        anchors.top: tabs.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -124,7 +92,7 @@ Item {
 
                 const x = contentX - currentItem.x;
                 if (x > currentItem.implicitWidth / 2)
-                    root.dashState.currentTab = Math.min(root.dashState.currentTab + 1, tabs.count - 1);
+                    root.dashState.currentTab = Math.min(root.dashState.currentTab + 1, root.dashboardTabs.length - 1);
                 else if (x < -currentItem.implicitWidth / 2)
                     root.dashState.currentTab = Math.max(root.dashState.currentTab - 1, 0);
             }
@@ -135,7 +103,7 @@ Item {
 
                 const x = contentX - currentItem.x;
                 if (x > currentItem.implicitWidth / 10)
-                    root.dashState.currentTab = Math.min(root.dashState.currentTab + 1, tabs.count - 1);
+                    root.dashState.currentTab = Math.min(root.dashState.currentTab + 1, root.dashboardTabs.length - 1);
                 else if (x < -currentItem.implicitWidth / 10)
                     root.dashState.currentTab = Math.max(root.dashState.currentTab - 1, 0);
                 else
@@ -160,7 +128,7 @@ Item {
 
                         Layout.alignment: Qt.AlignTop
 
-                        sourceComponent: modelData.component
+                        sourceComponent: root.componentFor(paneLoader.modelData.id)
 
                         Component.onCompleted: active = Qt.binding(() => {
                             if (index === view.currentIndex)

@@ -11,6 +11,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.services
+import qs.modules.dashboard as Dashboard
 import qs.modules.workspacegroups
 
 StyledWindow {
@@ -35,6 +36,18 @@ StyledWindow {
     // Top edge of the frame is thickened just enough to host the workspace-group
     // picker (its content height plus padding); collapses in fullscreen.
     readonly property real topBarThickness: hasFullscreen ? 0 : groupPicker.implicitHeight + Tokens.padding.small * 2
+    // Driven from visibilities rather than the dashboard panel's own offsetScale:
+    // Panels requires this value at construction, so reading it back off
+    // panels.dashboard would be an initialisation cycle.
+    readonly property real dashTabsTarget: hasFullscreen || !visibilities.dashboard || !contentItem.Config.dashboard.enabled ? 0 : dashTabs.implicitHeight + Tokens.padding.small * 2
+    property real dashTabsHeight: dashTabsTarget
+
+    Behavior on dashTabsHeight {
+        Anim {
+            type: Anim.DefaultSpatial
+        }
+    }
+
     property real borderRounding: hasFullscreen ? 0 : contentItem.Config.border.rounding
     property real shadowOpacity: hasFullscreen ? 0 : 0.7
 
@@ -131,7 +144,7 @@ StyledWindow {
             radius: root.borderRounding
             borderLeft: root.borderThickness - anchors.margins
             borderRight: root.borderThickness - anchors.margins
-            borderTop: root.topBarThickness - anchors.margins
+            borderTop: root.topBarThickness + root.dashTabsHeight - anchors.margins
             borderBottom: root.borderThickness - anchors.margins
         }
 
@@ -216,6 +229,7 @@ StyledWindow {
             visibilities: visibilities
             borderThickness: root.borderThickness
             topBarThickness: root.topBarThickness
+            dashTabsHeight: root.dashTabsHeight
 
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
@@ -245,14 +259,30 @@ StyledWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: root.topBarThickness
+        height: root.topBarThickness + root.dashTabsHeight
 
         visible: !root.hasFullscreen
+        // Clips the strip until the bar has grown enough to show it
+        clip: true
 
         WorkspaceGroupBar {
             id: groupPicker
 
-            anchors.centerIn: parent
+            anchors.top: parent.top
+            anchors.topMargin: Tokens.padding.small
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Dashboard.Tabs {
+            id: dashTabs
+
+            anchors.top: groupPicker.bottom
+            anchors.topMargin: Tokens.padding.small
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            dashState: panels.dashboard.dashState
+            tabs: panels.dashboard.dashboardTabs
         }
     }
 
