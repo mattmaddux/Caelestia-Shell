@@ -93,7 +93,7 @@ StyledWindow {
     HyprlandFocusGrab {
         id: focusGrab
 
-        active: (visibilities.launcher && root.contentItem.Config.launcher.enabled) || (visibilities.sidebar && root.contentItem.Config.sidebar.enabled) || (visibilities.dashboard && root.contentItem.Config.dashboard.enabled && (!root.contentItem.Config.dashboard.showOnHover || interactions.dashboardKeyboardActive))
+        active: (visibilities.launcher && root.contentItem.Config.launcher.enabled) || (visibilities.sidebar && root.contentItem.Config.sidebar.enabled) || (visibilities.dashboard && root.contentItem.Config.dashboard.enabled)
         windows: [root]
         onCleared: {
             visibilities.launcher = false;
