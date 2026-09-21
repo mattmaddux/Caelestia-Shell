@@ -125,6 +125,13 @@ Item {
             }
 
             Tile {
+                icon: "cable"
+                kind: "expand"
+                inactiveOnColour: Nmcli.activeEthernet ? Colours.palette.m3primary : Colours.palette.m3secondary
+                onClicked: root.expand("ethernet")
+            }
+
+            Tile {
                 icon: "volume_up"
                 kind: "expand"
                 onClicked: root.expand("sound")
@@ -232,6 +239,8 @@ Item {
                         return wifiPanel;
                     case "bluetooth":
                         return bluetoothPanel;
+                    case "ethernet":
+                        return ethernetPanel;
                     case "sound":
                         return soundPanel;
                     case "performance":
@@ -292,6 +301,12 @@ Item {
                 id: bluetoothPanel
 
                 BluetoothPanel {}
+            }
+
+            Component {
+                id: ethernetPanel
+
+                EthernetPanel {}
             }
 
             Component {
