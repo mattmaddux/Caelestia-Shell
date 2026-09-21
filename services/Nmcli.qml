@@ -211,6 +211,9 @@ Singleton {
             const devices = [];
 
             for (const iface of interfaces) {
+                if (iface.state === "unmanaged")
+                    continue;
+
                 const connected = isConnectedState(iface.state);
 
                 devices.push({
@@ -1018,12 +1021,12 @@ Singleton {
                     if (value !== "--" && value.length > 0) {
                         details.dns.push(value);
                     }
-                } else if (isEthernet && key === "WIRED-PROPERTIES.MAC") {
+                } else if (key === "GENERAL.HWADDR") {
+                    details.macAddress = value;
+                } else if (key === "WIRED-PROPERTIES.MAC") {
                     details.macAddress = value;
                 } else if (isEthernet && key === "WIRED-PROPERTIES.SPEED") {
                     details.speed = value;
-                } else if (!isEthernet && key === "GENERAL.HWADDR") {
-                    details.macAddress = value;
                 }
             }
         }
