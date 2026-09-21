@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.components
-import qs.modules.bar.popouts // Need to import this module so the Wrapper type is the same as others
+import qs.modules.popouts // Need to import this module so the Wrapper type is the same as others
 
 Item {
     id: root

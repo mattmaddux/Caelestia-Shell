@@ -3,12 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Caelestia.Config
-import qs.modules.bar as Bar
 
 Region {
     id: root
 
-    required property Bar.BarWrapper bar
     required property Panels panels
     required property var win
 
@@ -16,9 +14,9 @@ Region {
     readonly property real clampedThickness: win.contentItem.Config.border.clampedThickness
     readonly property real topBarThickness: win.topBarThickness
 
-    x: bar.clampedWidth + win.dragMaskPadding
+    x: win.dragMaskPadding
     y: win.topBarThickness + win.dragMaskPadding
-    width: win.width - bar.clampedWidth - clampedThickness - win.dragMaskPadding * 2
+    width: win.width - clampedThickness - win.dragMaskPadding * 2
     height: win.height - win.topBarThickness - clampedThickness - win.dragMaskPadding * 2
     intersection: Intersection.Xor
 
@@ -62,7 +60,7 @@ Region {
     component R: Region {
         required property Item panel
 
-        x: panel.x + root.bar.implicitWidth
+        x: panel.x
         y: panel.y + root.topBarThickness
         width: panel.width
         height: panel.height

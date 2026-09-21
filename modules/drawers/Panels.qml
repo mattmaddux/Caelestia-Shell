@@ -2,13 +2,12 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
-import qs.modules.bar as Bar
 import qs.modules.dashboard as Dashboard
 import qs.modules.launcher as Launcher
 import qs.modules.notifications as Notifications
 import qs.modules.osd as Osd
 import qs.modules.sidebar as Sidebar
-import qs.modules.bar.popouts as BarPopouts
+import qs.modules.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
 
 Item {
@@ -16,7 +15,6 @@ Item {
 
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
-    required property Bar.BarWrapper bar
     required property real borderThickness
     required property real topBarThickness
 
@@ -32,7 +30,6 @@ Item {
 
     anchors.fill: parent
     anchors.margins: borderThickness
-    anchors.leftMargin: bar.implicitWidth
     // Top edge is the thick top bar, not the thin border, so panels (esp. the
     // top-anchored dashboard) sit below the top bar instead of behind it.
     anchors.topMargin: topBarThickness

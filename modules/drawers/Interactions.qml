@@ -1,11 +1,9 @@
 import QtQuick
-import QtQuick.Controls
 import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
-import qs.modules.bar as Bar
-import qs.modules.bar.popouts as BarPopouts
+import qs.modules.popouts as BarPopouts
 
 CustomMouseArea {
     id: root
@@ -14,7 +12,6 @@ CustomMouseArea {
     required property BarPopouts.Wrapper popouts
     required property DrawerVisibilities visibilities
     required property Panels panels
-    required property Bar.BarWrapper bar
     required property real borderThickness
     required property real topBarThickness
     required property bool fullscreen
@@ -30,16 +27,16 @@ CustomMouseArea {
     }
 
     function withinPanelWidth(panel: Item, x: real, y: real): bool {
-        const panelX = bar.implicitWidth + panel.x;
+        const panelX = panel.x;
         return x >= panelX - Config.border.rounding && x <= panelX + panel.width + Config.border.rounding;
     }
 
     function inLeftPanel(panel: Item, x: real, y: real): bool {
-        return x < bar.implicitWidth + panel.x + panel.width && withinPanelHeight(panel, x, y);
+        return x < panel.x + panel.width && withinPanelHeight(panel, x, y);
     }
 
     function inRightPanel(panel: Item, x: real, y: real): bool {
-        return x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
+        return x > Math.min(width - Config.border.minThickness, panel.x) && withinPanelHeight(panel, x, y);
     }
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
@@ -50,14 +47,6 @@ CustomMouseArea {
     function inBottomPanel(panel: Item, x: real, y: real, isCorner = false): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
         return y > height - Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) - (isCorner ? Config.border.rounding : 0) && withinPanelWidth(panel, x, y);
-    }
-
-    function onWheel(event: WheelEvent): void {
-        if (fullscreen)
-            return;
-        if (event.x < bar.implicitWidth) {
-            bar.handleWheel(event.y, event.angleDelta);
-        }
     }
 
     anchors.fill: parent
@@ -76,13 +65,7 @@ CustomMouseArea {
             if (!dashboardShortcutActive)
                 visibilities.dashboard = false;
 
-            if (!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) {
-                popouts.hasCurrent = false;
-                bar.closeTray();
-            }
-
-            if (Config.bar.showOnHover)
-                bar.isHovered = false;
+            popouts.hasCurrent = false;
         }
     }
 
@@ -94,18 +77,6 @@ CustomMouseArea {
         const y = event.y;
         const dragX = x - dragStart.x;
         const dragY = y - dragStart.y;
-
-        // Show bar in non-exclusive mode on hover
-        if (!visibilities.bar && Config.bar.showOnHover && x < bar.clampedWidth)
-            bar.isHovered = true;
-
-        // Show/hide bar on drag
-        if (pressed && dragStart.x < bar.clampedWidth) {
-            if (dragX > Config.bar.dragThreshold)
-                visibilities.bar = true;
-            else if (dragX < -Config.bar.dragThreshold)
-                visibilities.bar = false;
-        }
 
         if (panels.sidebar.offsetScale === 1) {
             // Show osd on hover
@@ -121,7 +92,7 @@ CustomMouseArea {
                 root.panels.osd.hovered = true;
             }
 
-            const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x);
+            const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, panels.sidebar.x);
 
             if (showSidebar && dragX < -Config.sidebar.dragThreshold)
                 visibilities.sidebar = true;
@@ -175,13 +146,10 @@ CustomMouseArea {
                 visibilities.dashboard = false;
         }
 
-        // Show popouts on hover
-        if (x < bar.implicitWidth) {
-            bar.checkPopout(y);
-        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inLeftPanel(panels.popoutsWrapper, x, y)) {
+        // Popouts were opened by hovering the bar; only the detached ones
+        // (winfo, control centre) remain, and they manage their own dismissal
+        if (!inLeftPanel(panels.popoutsWrapper, x, y))
             popouts.hasCurrent = false;
-            bar.closeTray();
-        }
     }
 
     // Monitor individual visibility changes

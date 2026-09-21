@@ -16,13 +16,11 @@ Item {
     required property ShellScreen screen
     required property real offsetScale
 
-    readonly property alias content: content
     readonly property alias winfo: winfo
     readonly property alias controlCenter: controlCenter
 
-    readonly property real nonAnimWidth: children.find(c => c.shouldBeActive)?.implicitWidth ?? content.implicitWidth
-    readonly property real nonAnimHeight: children.find(c => c.shouldBeActive)?.implicitHeight ?? content.implicitHeight
-    readonly property Item current: (content.item as Content)?.current ?? null
+    readonly property real nonAnimWidth: children.find(c => c.shouldBeActive)?.implicitWidth ?? 0
+    readonly property real nonAnimHeight: children.find(c => c.shouldBeActive)?.implicitHeight ?? 0
     readonly property bool isDetached: detachedMode.length > 0
 
     property alias currentName: popoutState.currentName
@@ -68,24 +66,7 @@ Item {
     implicitHeight: nonAnimHeight
 
     focus: hasCurrent
-    Keys.onEscapePressed: {
-        // Forward escape to password popout if active, otherwise close
-        if (currentName === "wirelesspassword" && content.item) {
-            const passwordPopout = (content.item as Content)?.children.find(c => c.name === "wirelesspassword");
-            if (passwordPopout && passwordPopout.item) {
-                passwordPopout.item.closeDialog();
-                return;
-            }
-        }
-        close();
-    }
-
-    Keys.onPressed: event => {
-        // Don't intercept keys when password popout is active - let it handle them
-        if (currentName === "wirelesspassword") {
-            event.accepted = false;
-        }
-    }
+    Keys.onEscapePressed: close()
 
     PopoutState {
         id: popoutState
@@ -116,17 +97,6 @@ Item {
         target: QsWindow.window
         property: "WlrLayershell.keyboardFocus"
         value: WlrKeyboardFocus.OnDemand
-    }
-
-    Comp {
-        id: content
-
-        shouldBeActive: root.hasCurrent && !root.detachedMode
-        anchors.fill: parent
-
-        sourceComponent: Content {
-            popouts: popoutState
-        }
     }
 
     Comp {

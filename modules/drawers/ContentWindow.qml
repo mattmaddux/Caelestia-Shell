@@ -11,13 +11,11 @@ import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.services
-import qs.modules.bar
 import qs.modules.workspacegroups
 
 StyledWindow {
     id: root
 
-    readonly property alias bar: bar
     readonly property alias interactionWrapper: interactions
 
     readonly property HyprlandMonitor monitor: Hypr.monitorFor(screen)
@@ -65,7 +63,6 @@ StyledWindow {
     WlrLayershell.keyboardFocus: visibilities.launcher || panels.dashboard.needsKeyboard ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     mask: Regions {
-        bar: bar
         panels: panels
         win: root
     }
@@ -96,14 +93,13 @@ StyledWindow {
     HyprlandFocusGrab {
         id: focusGrab
 
-        active: (visibilities.launcher && root.contentItem.Config.launcher.enabled) || (visibilities.sidebar && root.contentItem.Config.sidebar.enabled) || (visibilities.dashboard && root.contentItem.Config.dashboard.enabled && (!root.contentItem.Config.dashboard.showOnHover || interactions.dashboardKeyboardActive)) || (panels.popouts.currentName.startsWith("traymenu") && (panels.popouts.current as StackView)?.depth > 1)
+        active: (visibilities.launcher && root.contentItem.Config.launcher.enabled) || (visibilities.sidebar && root.contentItem.Config.sidebar.enabled) || (visibilities.dashboard && root.contentItem.Config.dashboard.enabled && (!root.contentItem.Config.dashboard.showOnHover || interactions.dashboardKeyboardActive))
         windows: [root]
         onCleared: {
             visibilities.launcher = false;
             visibilities.sidebar = false;
             visibilities.dashboard = false;
             panels.popouts.hasCurrent = false;
-            bar.closeTray();
         }
     }
 
@@ -133,7 +129,7 @@ StyledWindow {
             anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
             group: blobGroup
             radius: root.borderRounding
-            borderLeft: bar.implicitWidth - anchors.margins
+            borderLeft: root.borderThickness - anchors.margins
             borderRight: root.borderThickness - anchors.margins
             borderTop: root.topBarThickness - anchors.margins
             borderBottom: root.borderThickness - anchors.margins
@@ -166,7 +162,7 @@ StyledWindow {
 
             panel: panels.osdWrapper
             deformAmount: 0.25
-            x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
+            x: panels.osdWrapper.x + panels.osd.x
             implicitWidth: panels.osd.width
         }
 
@@ -184,7 +180,7 @@ StyledWindow {
 
             panel: panels.popoutsWrapper
             deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
-            x: panels.popoutsWrapper.x + panels.popouts.x + bar.implicitWidth - panels.popouts.width * extraWidth
+            x: panels.popoutsWrapper.x + panels.popouts.x - panels.popouts.width * extraWidth
             implicitWidth: panels.popouts.width * (1 + extraWidth)
 
             Behavior on extraWidth {
@@ -209,7 +205,6 @@ StyledWindow {
         popouts: panels.popouts
         visibilities: visibilities
         panels: panels
-        bar: bar
         borderThickness: root.borderLayoutThickness
         topBarThickness: root.topBarThickness
         fullscreen: root.hasFullscreen
@@ -219,7 +214,6 @@ StyledWindow {
 
             screen: root.screen
             visibilities: visibilities
-            bar: bar
             borderThickness: root.borderThickness
             topBarThickness: root.topBarThickness
 
@@ -243,20 +237,6 @@ StyledWindow {
             }
         }
 
-        BarWrapper {
-            id: bar
-
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-
-            screen: root.screen
-            visibilities: visibilities
-            popouts: panels.popouts
-
-            fullscreen: root.hasFullscreen
-
-            Component.onCompleted: Visibilities.bars.set(root.screen, this)
-        }
     }
 
     Item {
@@ -281,7 +261,7 @@ StyledWindow {
         property real deformAmount: 0.15
 
         group: blobGroup
-        x: panel.x + bar.implicitWidth
+        x: panel.x
         y: panel.y + root.topBarThickness
         implicitWidth: panel.width
         implicitHeight: panel.height

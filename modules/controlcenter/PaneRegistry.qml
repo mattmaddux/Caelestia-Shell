@@ -31,12 +31,6 @@ QtObject {
             readonly property string component: "appearance/AppearancePane.qml"
         },
         QtObject {
-            readonly property string id: "taskbar"
-            readonly property string label: "taskbar"
-            readonly property string icon: "task_alt"
-            readonly property string component: "taskbar/TaskbarPane.qml"
-        },
-        QtObject {
             readonly property string id: "notifications"
             readonly property string label: "notifications"
             readonly property string icon: "notifications"

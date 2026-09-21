@@ -6,7 +6,7 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
-import qs.modules.bar.popouts as BarPopouts
+import qs.modules.popouts as BarPopouts
 import qs.utils
 
 Item {
