@@ -4,6 +4,7 @@ import "controls"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Bluetooth
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -112,6 +113,18 @@ Item {
             }
 
             Tile {
+                icon: {
+                    if (!Bluetooth.defaultAdapter?.enabled)
+                        return "bluetooth_disabled";
+                    if (Bluetooth.devices.values.some(d => d.connected))
+                        return "bluetooth_connected";
+                    return "bluetooth";
+                }
+                kind: "expand"
+                onClicked: root.expand("bluetooth")
+            }
+
+            Tile {
                 icon: "volume_up"
                 kind: "expand"
                 onClicked: root.expand("sound")
@@ -217,6 +230,8 @@ Item {
                         return windowsPanel;
                     case "wifi":
                         return wifiPanel;
+                    case "bluetooth":
+                        return bluetoothPanel;
                     case "sound":
                         return soundPanel;
                     case "performance":
@@ -271,6 +286,12 @@ Item {
                 id: wifiPanel
 
                 WifiPanel {}
+            }
+
+            Component {
+                id: bluetoothPanel
+
+                BluetoothPanel {}
             }
 
             Component {
