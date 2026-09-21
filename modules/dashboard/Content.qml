@@ -82,7 +82,6 @@ Item {
         anchors.topMargin: Tokens.padding.normal
         anchors.margins: Tokens.padding.large
 
-        nonAnimWidth: root.nonAnimWidth - anchors.margins * 2
         dashState: root.dashState
         tabs: root.dashboardTabs
     }

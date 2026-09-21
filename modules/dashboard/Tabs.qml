@@ -12,7 +12,6 @@ import qs.services
 Item {
     id: root
 
-    required property real nonAnimWidth
     required property DashboardState dashState
     required property var tabs
 
@@ -23,8 +22,7 @@ Item {
     TabBar {
         id: bar
 
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
 
         currentIndex: root.dashState.currentTab
@@ -52,21 +50,10 @@ Item {
         anchors.top: bar.bottom
         anchors.topMargin: 5
 
-        implicitWidth: {
-            const tab = bar.currentItem;
-            if (tab)
-                return tab.implicitWidth;
-            const width = (root.nonAnimWidth - bar.spacing * (bar.count - 1)) / bar.count;
-            return width;
-        }
+        implicitWidth: bar.currentItem?.implicitWidth ?? 0
         implicitHeight: 3
 
-        x: {
-            const tab = bar.currentItem;
-            const width = (root.nonAnimWidth - bar.spacing * (bar.count - 1)) / bar.count;
-            const tabWidth = tab?.implicitWidth ?? width;
-            return width * bar.currentIndex + (width - tabWidth) / 2;
-        }
+        x: bar.x + (bar.currentItem?.x ?? 0)
 
         clip: true
 
@@ -107,6 +94,11 @@ Item {
         readonly property bool current: TabBar.tabBar.currentItem === this
 
         background: null
+
+        // The bar no longer stretches to the panel width, so each button has to
+        // carry its own breathing room rather than relying on distribution
+        leftPadding: Tokens.padding.large
+        rightPadding: Tokens.padding.large
 
         contentItem: CustomMouseArea {
             id: mouse
