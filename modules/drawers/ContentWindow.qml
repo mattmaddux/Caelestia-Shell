@@ -41,6 +41,7 @@ StyledWindow {
     // panels.dashboard would be an initialisation cycle.
     readonly property real dashTabsTarget: hasFullscreen || !visibilities.dashboard || !contentItem.Config.dashboard.enabled ? 0 : dashTabs.implicitHeight + Tokens.padding.small * 2
     property real dashTabsHeight: dashTabsTarget
+    readonly property real topInset: topBarThickness + dashTabsHeight
 
     Behavior on dashTabsHeight {
         Anim {
@@ -144,7 +145,7 @@ StyledWindow {
             radius: root.borderRounding
             borderLeft: root.borderThickness - anchors.margins
             borderRight: root.borderThickness - anchors.margins
-            borderTop: root.topBarThickness + root.dashTabsHeight - anchors.margins
+            borderTop: root.topInset - anchors.margins
             borderBottom: root.borderThickness - anchors.margins
         }
 
@@ -219,7 +220,7 @@ StyledWindow {
         visibilities: visibilities
         panels: panels
         borderThickness: root.borderLayoutThickness
-        topBarThickness: root.topBarThickness
+        topBarThickness: root.topInset
         fullscreen: root.hasFullscreen
 
         Panels {
@@ -228,8 +229,7 @@ StyledWindow {
             screen: root.screen
             visibilities: visibilities
             borderThickness: root.borderThickness
-            topBarThickness: root.topBarThickness
-            dashTabsHeight: root.dashTabsHeight
+            topBarThickness: root.topInset
 
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
@@ -259,7 +259,7 @@ StyledWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: root.topBarThickness + root.dashTabsHeight
+        height: root.topInset
 
         visible: !root.hasFullscreen
         // Clips the strip until the bar has grown enough to show it
@@ -277,7 +277,7 @@ StyledWindow {
             id: dashTabs
 
             anchors.top: groupPicker.bottom
-            anchors.topMargin: Tokens.padding.small
+            anchors.topMargin: Tokens.padding.large
             anchors.left: parent.left
             anchors.right: parent.right
 
@@ -292,7 +292,7 @@ StyledWindow {
 
         group: blobGroup
         x: panel.x
-        y: panel.y + root.topBarThickness
+        y: panel.y + root.topInset
         implicitWidth: panel.width
         implicitHeight: panel.height
         radius: Tokens.rounding.large

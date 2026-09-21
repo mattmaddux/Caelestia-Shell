@@ -17,8 +17,6 @@ Item {
     required property DrawerVisibilities visibilities
     required property real borderThickness
     required property real topBarThickness
-    // Height the dashboard's tab strip currently occupies in the top bar
-    required property real dashTabsHeight
 
     readonly property alias osd: osd
     readonly property alias osdWrapper: osdWrapper
@@ -93,7 +91,6 @@ Item {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: root.dashTabsHeight
     }
 
     BarPopouts.ClipWrapper {

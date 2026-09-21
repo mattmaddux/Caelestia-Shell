@@ -17,7 +17,7 @@ Item {
 
     readonly property alias count: bar.count
 
-    implicitHeight: bar.implicitHeight + indicator.implicitHeight + indicator.anchors.topMargin + separator.implicitHeight
+    implicitHeight: bar.implicitHeight + indicator.implicitHeight + indicator.anchors.topMargin
 
     TabBar {
         id: bar
@@ -50,7 +50,16 @@ Item {
         anchors.top: bar.bottom
         anchors.topMargin: 5
 
-        implicitWidth: bar.currentItem?.implicitWidth ?? 0
+        // width, not implicitWidth: TabBar lays buttons out narrower than
+        // their implicit size, and the indicator must match what is drawn
+        implicitWidth: {
+            // Reading bar.width registers a dependency that actually notifies;
+            // TabButton.width does not, so without it this binding evaluates
+            // once while the bar is still unlaid-out and sticks at 0
+            bar.width;
+            const tab = bar.currentItem;
+            return tab ? tab.width : 0;
+        }
         implicitHeight: 3
 
         x: bar.x + (bar.currentItem?.x ?? 0)
@@ -74,17 +83,6 @@ Item {
         Behavior on implicitWidth {
             Anim {}
         }
-    }
-
-    StyledRect {
-        id: separator
-
-        anchors.top: indicator.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-        implicitHeight: 1
-        color: Colours.palette.m3outlineVariant
     }
 
     component Tab: TabButton {
